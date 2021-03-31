@@ -14,7 +14,7 @@ sudo: false
 # после выполнения сборки запустить скрипт, который будет собирать статистику по JaCoCo
 # Здесь используется сторонний сервис https://codecov.io/
 after_success:
-  - bash <(curl -s https:codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
 # отпрвлять уведомление на почту tanuskanikolaeva@mail.ru если сборка упала
 
 
