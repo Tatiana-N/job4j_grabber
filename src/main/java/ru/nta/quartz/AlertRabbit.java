@@ -3,6 +3,7 @@ package ru.nta.quartz;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -18,15 +19,11 @@ public class AlertRabbit {
     return properties;
   }
 
-  public void setProperties(String str) {
-    try {
+  public void setProperties(String str) throws IOException {
       properties.load(new FileReader(str));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     try {
      AlertRabbit alertRabbit = new AlertRabbit();
      alertRabbit.setProperties("src/main/resources/rabbit.properties");
