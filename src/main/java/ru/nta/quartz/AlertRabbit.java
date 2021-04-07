@@ -47,7 +47,7 @@ public class AlertRabbit {
         }
 
         @Override
-        public void execute(JobExecutionContext context) {//throws JobExecutionException {
+        public void execute(JobExecutionContext context) { //throws JobExecutionException {
             System.out.println("Rabbit runs here ...");
             Connection connection = (Connection) context.getJobDetail().getJobDataMap().get("conect");
             long timeMillis = System.currentTimeMillis();
