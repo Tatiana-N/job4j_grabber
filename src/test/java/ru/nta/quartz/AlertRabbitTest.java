@@ -34,32 +34,7 @@ public class AlertRabbitTest {
 
     @Test
     public void getConnection() {
-        try {
-            AlertRabbit alertRabbit = new AlertRabbit();
-            alertRabbit.setProperties("src/main/resources/rabbit.properties");
-            try (Connection connection = alertRabbit.getConnection()) {
-                Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-                scheduler.start();
-                JobDataMap data = new JobDataMap();
-                data.put("conect", connection);
-                JobDetail job = newJob(AlertRabbit.Rabbit.class)
-                        .usingJobData(data)
-                        .build();
-                SimpleScheduleBuilder times = simpleSchedule()
-                        .withIntervalInSeconds(Integer.parseInt(alertRabbit.getProperties().get("rabbit.interval").toString()))
-                        .repeatForever();
-                Trigger trigger = newTrigger()
-                        .startNow()
-                        .withSchedule(times)
-                        .build();
-                scheduler.scheduleJob(job, trigger);
-                Thread.sleep(10000);
-                scheduler.shutdown();
-            } catch (SQLException throwable) {
-                throwable.printStackTrace();
-            }
-        } catch (InterruptedException | SchedulerException | IOException ex) {
-            ex.printStackTrace();
-        }
+        String[] a = new String[0];
+        AlertRabbit.main(a);
     }
 }
