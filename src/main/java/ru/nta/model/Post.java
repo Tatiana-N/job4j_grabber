@@ -3,14 +3,18 @@ package ru.nta.model;
 import java.time.LocalDateTime;
 
 public class Post {
+    private int id;
     private String link;
+    private String text;
     private String name;
-    private LocalDateTime dateTime;
+    private LocalDateTime created;
 
-    public Post(String link, String name, LocalDateTime dateTime) {
-        this.link = link;
-        this.name = name;
-        this.dateTime = dateTime;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getLink() {
@@ -21,6 +25,14 @@ public class Post {
         this.link = link;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     public String getName() {
         return name;
     }
@@ -29,11 +41,19 @@ public class Post {
         this.name = name;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDateTime getCreated() {
+        return created;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    public Post(int id, String link, String text, String name, LocalDateTime created) {
+        this.id = id;
+        this.link = link;
+        this.text = text;
+        this.name = name;
+        this.created = created;
     }
 }
