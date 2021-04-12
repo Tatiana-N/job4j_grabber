@@ -1,6 +1,7 @@
 package ru.nta.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Post {
     private int id;
@@ -49,8 +50,19 @@ public class Post {
         this.created = created;
     }
 
-    public Post(int id, String link, String text, String name, LocalDateTime created) {
-        this.id = id;
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(" dd.MM.yyyyг. HH:mm ");
+        return "Post{" +
+                "id=" + id +
+                ", created=" + formatter.format(created) +
+                ", name='" + name + '\'' +
+                ", link='" + link + '\'' +
+                ", text='" + text.substring(0, 25) + "..." + '\'' +
+                '}';
+    }
+
+    public Post(String link, String text, String name, LocalDateTime created) {
         this.link = link;
         this.text = text;
         this.name = name;
