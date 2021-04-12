@@ -53,13 +53,13 @@ public class Post {
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(" dd.MM.yyyyг. HH:mm ");
-        return "Post{" +
-                "id=" + id +
-                ", created=" + formatter.format(created) +
-                ", name='" + name + '\'' +
-                ", link='" + link + '\'' +
-                ", text='" + text.substring(0, 25) + "..." + '\'' +
-                '}';
+        return "Post{"
+                + "id=" + id
+                + ", created=" + formatter.format(created)
+                + ", name='" + name + '\''
+                + ", link='" + link + '\''
+                + ", text='" + text.substring(0, 25) + "..." + '\''
+                + '}';
     }
 
     public Post(String link, String text, String name, LocalDateTime created) {
