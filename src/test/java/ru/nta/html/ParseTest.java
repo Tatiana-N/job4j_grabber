@@ -2,11 +2,10 @@ package ru.nta.html;
 
 import org.junit.Assert;
 import org.junit.Test;
+import ru.nta.api.Parse;
 import ru.nta.model.Post;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class ParseTest {
 

@@ -4,6 +4,7 @@ import org.jsoup.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ru.nta.api.Parse;
 import ru.nta.model.Post;
 import ru.nta.utils.SqlRuDateTimeParser;
 

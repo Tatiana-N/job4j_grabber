@@ -1,4 +1,4 @@
-package ru.nta.html;
+package ru.nta.api;
 
 
 import org.jsoup.nodes.Element;
