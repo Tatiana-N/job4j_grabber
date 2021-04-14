@@ -15,7 +15,7 @@ public class SqlRuDateTimeParser implements DateTimeParser {
     @Override
     public LocalDateTime parse(String parse) {
         dateTime = LocalDateTime.now();
-        parse = parse.replaceAll(",", "").trim();
+        parse = parse.replaceAll(",", "").replaceAll("\\.", "").trim();
         if (parse.startsWith("вчера")) {
             dateTime = dateTime.minusDays(1);
             time = parse.substring(parse.indexOf(" ") + 1);

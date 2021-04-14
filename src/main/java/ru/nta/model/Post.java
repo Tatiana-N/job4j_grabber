@@ -2,6 +2,7 @@ package ru.nta.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Post {
     private int id;
@@ -51,14 +52,32 @@ public class Post {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Post)) {
+            return false;
+        }
+        Post post = (Post) o;
+        return getId() == post.getId() && getLink().equals(post.getLink()) && getText().equals(post.getText()) && getName().equals(post.getName()) && getCreated().equals(post.getCreated());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getLink(), getText(), getName(), getCreated());
+    }
+
+    @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(" dd.MM.yyyyг. HH:mm ");
+        text = text.length() > 25 ? text.substring(0, 25) + "..." : text;
         return "Post{"
                 + "id=" + id
                 + ", created=" + formatter.format(created)
                 + ", name='" + name + '\''
                 + ", link='" + link + '\''
-                + ", text='" + text.substring(0, 25) + "..." + '\''
+                + ", text='" + text + '\''
                 + '}';
     }
 
@@ -66,6 +85,8 @@ public class Post {
         this.link = link;
         this.text = text;
         this.name = name;
+        created = created.withNano(0);
+        created = created.withSecond(0);
         this.created = created;
     }
 }
