@@ -18,7 +18,7 @@ public class PsqlStoreTest {
         Properties prop = new Properties();
         prop.load(new FileReader("src/main/resources/rabbit.properties"));
         Store store = new PsqlStore(prop);
-        Post post = new Post("er5", "re", "tr", LocalDateTime.now());
+        Post post = new Post("er513", "re", "tr", LocalDateTime.now());
         store.save(post);
     }
 
@@ -33,7 +33,7 @@ public class PsqlStoreTest {
 
     @Test
     public void findById() throws IOException {
-        Post post = new Post("newLink4", "newText", "newName", LocalDateTime.now());
+        Post post = new Post("newLink413", "newText", "newName", LocalDateTime.now());
         Properties prop = new Properties();
         prop.load(new FileReader("src/main/resources/rabbit.properties"));
         Store store = new PsqlStore(prop);

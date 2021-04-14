@@ -121,7 +121,7 @@ public class PsqlStore implements Store, AutoCloseable {
         try (PreparedStatement preparedStatement = connection.prepareStatement("delete from post where id = ? ;")) {
             preparedStatement.setInt(1, postId);
             preparedStatement.executeQuery();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return true;
