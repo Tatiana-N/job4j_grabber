@@ -34,7 +34,7 @@ public class PsqlStore implements Store, AutoCloseable {
             preparedStatement.setString(3, post.getLink());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00");
             Timestamp timestamp = Timestamp.valueOf(post.getCreated().format(formatter));
-            preparedStatement.setTimestamp(4, timestamp );
+            preparedStatement.setTimestamp(4, timestamp);
             preparedStatement.executeUpdate();
             try (
                     ResultSet generatedKeys = preparedStatement.getGeneratedKeys()
