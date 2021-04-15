@@ -44,7 +44,9 @@ public class PsqlStore implements Store, AutoCloseable {
 
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (!e.getMessage().contains("ОШИБКА: повторяющееся значение ключа")) {
+                e.printStackTrace();
+            }
         }
     }
 
