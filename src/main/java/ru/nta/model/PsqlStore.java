@@ -12,10 +12,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 public class PsqlStore implements Store, AutoCloseable {
     private final Connection connection;
+    private String tableName;
+
+    public PsqlStore(Connection connection, String tableName) {
+        this.connection = connection;
+        this.tableName = tableName;
+    }
 
     public PsqlStore(Properties cfg) {
         try {
@@ -28,25 +35,27 @@ public class PsqlStore implements Store, AutoCloseable {
 
     @Override
     public void save(Post post) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement("insert into post (name, text, link, created) values  (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, post.getName());
-            preparedStatement.setString(2, post.getText());
-            preparedStatement.setString(3, post.getLink());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00");
-            Timestamp timestamp = Timestamp.valueOf(post.getCreated().format(formatter));
-            preparedStatement.setTimestamp(4, timestamp);
-            preparedStatement.executeUpdate();
-            try (
-                    ResultSet generatedKeys = preparedStatement.getGeneratedKeys()
-            ) {
-                if (generatedKeys.next()) {
-                    post.setId(generatedKeys.getInt(1));
-                }
+        if (post.getText().toLowerCase(Locale.ROOT).contains("java") || post.getName().toLowerCase(Locale.ROOT).contains("java")) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("insert into %s (name, text, link, created) values  (?, ?, ?, ?)", tableName), Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, post.getName());
+                preparedStatement.setString(2, post.getText());
+                preparedStatement.setString(3, post.getLink());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00");
+                Timestamp timestamp = Timestamp.valueOf(post.getCreated().format(formatter));
+                preparedStatement.setTimestamp(4, timestamp);
+                preparedStatement.executeUpdate();
+                try (
+                        ResultSet generatedKeys = preparedStatement.getGeneratedKeys()
+                ) {
+                    if (generatedKeys.next()) {
+                        post.setId(generatedKeys.getInt(1));
+                    }
 
-            }
-        } catch (SQLException e) {
-            if (!e.getMessage().contains("ОШИБКА: повторяющееся значение ключа")) {
-                e.printStackTrace();
+                }
+            } catch (SQLException e) {
+                if (!e.getMessage().contains("ОШИБКА: повторяющееся значение ключа")) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -54,14 +63,10 @@ public class PsqlStore implements Store, AutoCloseable {
     @Override
     public List<Post> getAll() {
         List<Post> list = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement("select * from post;")) {
+        try (PreparedStatement ps = connection.prepareStatement(String.format("select * from %s;", tableName))) {
             try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
-                    DateTimeParser parser = new SqlRuDateTimeParser();
-                    String dateSQL = resultSet.getString("created");
-                    String[] s = dateSQL.substring(0, dateSQL.lastIndexOf(":")).trim().replaceAll("-", " ").split(" ");
-                    String datePost = s[2] + " " + s[1] + " " + s[0].substring(2) + " " + s[3];
-                    LocalDateTime created = parser.parse(datePost);
+                    LocalDateTime created = ldt(resultSet.getString("created"));
                     Post post = new Post(resultSet.getString("link"),
                             resultSet.getString("text"),
                             resultSet.getString("name"),
@@ -70,7 +75,7 @@ public class PsqlStore implements Store, AutoCloseable {
                     list.add(post);
                 }
             }
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
@@ -80,22 +85,33 @@ public class PsqlStore implements Store, AutoCloseable {
     public Post findById(String id) {
         Post post = null;
         int postId = Integer.parseInt(id);
-        try (PreparedStatement preparedStatement = connection.prepareStatement("select * from post where id = ? ;")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where id = ? ;", tableName))) {
             preparedStatement.setInt(1, postId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 resultSet.next();
-                DateTimeParser parser = new SqlRuDateTimeParser();
-                LocalDateTime created = parser.parse(resultSet.getString("created"));
+                LocalDateTime created = ldt(resultSet.getString("created"));
                 post = new Post(resultSet.getString("link"),
                         resultSet.getString("text"),
                         resultSet.getString("name"),
                         created);
                 post.setId(postId);
             }
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return post;
+    }
+
+    private LocalDateTime ldt(String dateSQL) {
+        DateTimeParser parser = new SqlRuDateTimeParser();
+        String[] s = dateSQL.substring(0, dateSQL.lastIndexOf(":")).trim().replaceAll("-", " ").split(" ");
+        String datePost = s[2] + " " + s[1] + " " + s[0].substring(2) + " " + s[3];
+        try {
+            return parser.parse(datePost);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -119,17 +135,5 @@ public class PsqlStore implements Store, AutoCloseable {
         list.forEach(System.out::println);
         Post byId = psqlStore.findById(post.getId() + "");
         System.out.println(byId.equals(post));
-    }
-
-    @Override
-    public boolean deeleteById(String id) {
-        int postId = Integer.parseInt(id);
-        try (PreparedStatement preparedStatement = connection.prepareStatement("delete from post where id = ? ;")) {
-            preparedStatement.setInt(1, postId);
-            preparedStatement.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return true;
     }
 }
