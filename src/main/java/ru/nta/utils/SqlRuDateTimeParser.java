@@ -24,7 +24,11 @@ public class SqlRuDateTimeParser implements DateTimeParser {
         } else {
             String[] dataNumber = parse.split(" ");
             dateTime = dateTime.withDayOfMonth(1);
-            dateTime = dateTime.withMonth(shortMonths.indexOf(dataNumber[1]) + 1);
+            try { dateTime = dateTime.withMonth(Integer.parseInt(dataNumber[1]));
+            } catch (NumberFormatException e){
+                dateTime = dateTime.withMonth(shortMonths.indexOf(dataNumber[1]) + 1);
+            }
+
             dateTime = dateTime.withDayOfMonth(Integer.parseInt(dataNumber[0]));
             dateTime = dateTime.withYear(Integer.parseInt(20 + dataNumber[2]));
             time = dataNumber[3];

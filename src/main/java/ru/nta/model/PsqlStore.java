@@ -32,8 +32,9 @@ public class PsqlStore implements Store, AutoCloseable {
             preparedStatement.setString(1, post.getName());
             preparedStatement.setString(2, post.getText());
             preparedStatement.setString(3, post.getLink());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yy, HH:mm");
-            preparedStatement.setString(4, post.getCreated().format(formatter));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00");
+            Timestamp timestamp = Timestamp.valueOf(post.getCreated().format(formatter));
+            preparedStatement.setTimestamp(4, timestamp );
             preparedStatement.executeUpdate();
             try (
                     ResultSet generatedKeys = preparedStatement.getGeneratedKeys()
@@ -57,7 +58,10 @@ public class PsqlStore implements Store, AutoCloseable {
             try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
                     DateTimeParser parser = new SqlRuDateTimeParser();
-                    LocalDateTime created = parser.parse(resultSet.getString("created"));
+                    String dateSQL = resultSet.getString("created");
+                    String[] s = dateSQL.substring(0, dateSQL.lastIndexOf(":")).trim().replaceAll("-", " ").split(" ");
+                    String datePost = s[2] + " " + s[1] + " " + s[0].substring(2) + " " + s[3];
+                    LocalDateTime created = parser.parse(datePost);
                     Post post = new Post(resultSet.getString("link"),
                             resultSet.getString("text"),
                             resultSet.getString("name"),

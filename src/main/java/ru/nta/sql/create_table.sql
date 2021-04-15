@@ -4,5 +4,5 @@ create table post
     name    varchar(100),
     text    text,
     link    varchar(200) unique,
-    created varchar(200)
+    created timestamp
 );
