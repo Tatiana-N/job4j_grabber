@@ -17,20 +17,21 @@ import java.util.Properties;
 
 public class PsqlStore implements Store, AutoCloseable {
     private final Connection connection;
-    private String tableName;
+    private final String tableName;
 
     public PsqlStore(Connection connection, String tableName) {
         this.connection = connection;
         this.tableName = tableName;
     }
 
-    public PsqlStore(Properties cfg) {
+    public PsqlStore(Properties cfg, String tableName) {
         try {
             Class.forName(cfg.getProperty("jdbc.driver"));
             connection = DriverManager.getConnection(cfg.getProperty("jdbc.url"), cfg.getProperty("jdbc.username"), cfg.getProperty("jdbc.password"));
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+        this.tableName = tableName;
     }
 
     @Override
@@ -119,19 +120,19 @@ public class PsqlStore implements Store, AutoCloseable {
         }
     }
 
-    public static void main(String[] args) {
-        Properties properties = new Properties();
-        try {
-            properties.load(new FileReader("src/main/resources/rabbit.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Store psqlStore = new PsqlStore(properties);
-        Post post = new Post(0, "link1", "test1", "name1", LocalDateTime.now());
-        psqlStore.save(post);
-        List<Post> list = psqlStore.getAll();
-        list.forEach(System.out::println);
-        Post byId = psqlStore.findById(post.getId() + "");
-        System.out.println(byId.equals(post));
-    }
+//    public static void main(String[] args) {
+//        Properties properties = new Properties();
+//        try {
+//            properties.load(new FileReader("src/main/resources/rabbit.properties"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Store psqlStore = new PsqlStore(properties);
+//        Post post = new Post(0, "link1", "test1", "name1", LocalDateTime.now());
+//        psqlStore.save(post);
+//        List<Post> list = psqlStore.getAll();
+//        list.forEach(System.out::println);
+//        Post byId = psqlStore.findById(post.getId() + "");
+//        System.out.println(byId.equals(post));
+//    }
 }

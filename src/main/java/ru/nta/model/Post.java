@@ -71,14 +71,15 @@ public class Post {
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(" dd.MM.yyyyг. HH:mm ");
-        text = text.length() > 25 ? text.substring(0, 25) + "..." : text;
+        //для сокращения вывода
+       // text = text.length() > 25 ? text.substring(0, 25) + "..." : text;
         return "Post{"
                 + "id=" + id
                 + ", created=" + formatter.format(created)
                 + ", name='" + name + '\''
                 + ", link='" + link + '\''
                 + ", text='" + text + '\''
-                + '}';
+                + "}\n";
     }
 
     public Post(int id, String link, String text, String name, LocalDateTime created) {

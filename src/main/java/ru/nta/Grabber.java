@@ -11,6 +11,8 @@ import ru.nta.model.PsqlStore;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Properties;
 
@@ -27,8 +29,8 @@ public class Grabber implements Grab {
     }
 
 
-    public Store store() {
-        return new PsqlStore(cfg);
+    public Store store(String tableName) {
+        return new PsqlStore(cfg, tableName);
     }
     public void web(Store store) {
         new Thread(() -> {
@@ -38,7 +40,7 @@ public class Grabber implements Grab {
                     try (OutputStream out = socket.getOutputStream()) {
                         out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
                         for (Post post : store.getAll()) {
-                            out.write(post.toString().getBytes());
+                            out.write(post.toString().getBytes("windows-1251"));
                             out.write(System.lineSeparator().getBytes());
                         }
                     } catch (IOException io) {
@@ -102,7 +104,7 @@ public class Grabber implements Grab {
         Grabber grab = new Grabber("https://www.sql.ru/forum/job-offers/1");
         grab.cfg();
         Scheduler scheduler = grab.scheduler();
-        Store store = grab.store();
+        Store store = grab.store("post");
         grab.init(new SqlRuParse(), store, scheduler);
         grab.web(store);
     }
