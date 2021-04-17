@@ -1,18 +1,17 @@
 package ru.nta;
+
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import ru.nta.api.Grab;
 import ru.nta.api.Parse;
-import ru.nta.api.Store;
+import ru.nta.api.DaoStore;
 import ru.nta.html.SqlRuParse;
 import ru.nta.model.Post;
-import ru.nta.model.PsqlStore;
+import ru.nta.dao.PsqlStore;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Properties;
 
@@ -20,7 +19,7 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
-public class Grabber implements Grab {
+public class Grabber implements Grab<Post> {
     private final Properties cfg = new Properties();
     private final String link;
 
@@ -29,17 +28,18 @@ public class Grabber implements Grab {
     }
 
 
-    public Store store(String tableName) {
+    public DaoStore<Post> store(String tableName) {
         return new PsqlStore(cfg, tableName);
     }
-    public void web(Store store) {
+
+    public void web(DaoStore<Post> daoStore) {
         new Thread(() -> {
             try (ServerSocket server = new ServerSocket(Integer.parseInt(cfg.getProperty("port")))) {
                 while (!server.isClosed()) {
                     Socket socket = server.accept();
                     try (OutputStream out = socket.getOutputStream()) {
                         out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
-                        for (Post post : store.getAll()) {
+                        for (Post post : daoStore.getAll()) {
                             out.write(post.toString().getBytes("windows-1251"));
                             out.write(System.lineSeparator().getBytes());
                         }
@@ -66,9 +66,9 @@ public class Grabber implements Grab {
     }
 
     @Override
-    public void init(Parse parse, Store store, Scheduler scheduler) throws SchedulerException {
+    public void init(Parse<Post> parse, DaoStore<Post> daoStore, Scheduler scheduler) throws SchedulerException {
         JobDataMap data = new JobDataMap();
-        data.put("store", store);
+        data.put("store", daoStore);
         data.put("parse", parse);
         data.put("link", link);
         JobDetail job = newJob(GrabJob.class)
@@ -89,12 +89,12 @@ public class Grabber implements Grab {
         @Override
         public void execute(JobExecutionContext context) {
             JobDataMap map = context.getJobDetail().getJobDataMap();
-            Store store = (Store) map.get("store");
-            Parse parse = (Parse) map.get("parse");
+            DaoStore<Post> daoStore = (DaoStore<Post>) map.get("store");
+            Parse<Post> parse = (Parse<Post>) map.get("parse");
             String link = (String) map.get("link");
             List<Post> list = parse.list(link);
             for (Post post : list) {
-                store.save(post);
+                daoStore.save(post);
             }
         }
     }
@@ -104,7 +104,7 @@ public class Grabber implements Grab {
         Grabber grab = new Grabber("https://www.sql.ru/forum/job-offers/1");
         grab.cfg();
         Scheduler scheduler = grab.scheduler();
-        Store store = grab.store("post");
+        DaoStore<Post> store = grab.store("post");
         grab.init(new SqlRuParse(), store, scheduler);
         grab.web(store);
     }

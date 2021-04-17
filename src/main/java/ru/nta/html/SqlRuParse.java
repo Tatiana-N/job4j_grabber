@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlRuParse implements Parse {
+public class SqlRuParse implements Parse<Post> {
     @Override
     public List<Post> list(String link) {
         List<Post> posts = new ArrayList<>();
@@ -24,15 +24,6 @@ public class SqlRuParse implements Parse {
         } catch (IOException e) {
             e.printStackTrace();
         }
-         /*  Element reference = element.child(0);
-            String date = element.getAllElements().nextAll().get(3).text();
-            String linkThis = reference.attr("href");
-            String name = reference.text();
-            System.out.println(linkThis);
-            System.out.println(name);
-            System.out.println(date);
-            posts.add(detail(reference));
-    }*/
         return posts;
     }
 
@@ -58,9 +49,6 @@ public class SqlRuParse implements Parse {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        System.out.println(reference);
-//        System.out.println(text);
-//        System.out.println(timeString);
         return new Post(0, reference, text, name, new SqlRuDateTimeParser().parse(timeString));
     }
 

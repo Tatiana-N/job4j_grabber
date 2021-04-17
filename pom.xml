@@ -104,7 +104,7 @@
                 <artifactId>liquibase-maven-plugin</artifactId>
                 <version>3.6.2</version>
                 <configuration>
-                    <changeLogFile>${basedir}/db/master.xml</changeLogFile>
+                    <changeLogFile>${basedir}/src/main/java/ru/nta/sql/master.xml</changeLogFile>
                     <url>${db.url}</url>
                     <driver>${db.driver}</driver>
                     <username>${db.username}</username>

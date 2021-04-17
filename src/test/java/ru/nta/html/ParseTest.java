@@ -11,7 +11,7 @@ public class ParseTest {
 
     @Test
     public void list() {
-        Parse sqlRuParse = new SqlRuParse();
+        Parse<Post> sqlRuParse = new SqlRuParse();
         for (int i = 0; i < 5; i++) {
             List<Post> pages = sqlRuParse.list("https://www.sql.ru/forum/job-offers/" + (i + 1));
             Assert.assertEquals(pages.size(), 53);
@@ -20,7 +20,7 @@ public class ParseTest {
 
     @Test
     public void detail() {
-        Parse sqlRuParse = new SqlRuParse();
+        Parse<Post> sqlRuParse = new SqlRuParse();
             List<Post> pages1 = sqlRuParse.list("https://www.sql.ru/forum/job-offers/1");
             List<Post> pages2 = sqlRuParse.list("https://www.sql.ru/forum/job-offers/2");
             List<Post> pages3 = sqlRuParse.list("https://www.sql.ru/forum/job-offers/3");

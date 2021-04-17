@@ -1,11 +1,10 @@
-package ru.nta.model;
+package ru.nta.dao;
 
-import ru.nta.api.Store;
+import ru.nta.api.DaoStore;
+import ru.nta.model.Post;
 import ru.nta.utils.DateTimeParser;
 import ru.nta.utils.SqlRuDateTimeParser;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.*;
 import java.text.ParseException;
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-public class PsqlStore implements Store, AutoCloseable {
+public class PsqlStore implements DaoStore<Post>, AutoCloseable {
     private final Connection connection;
     private final String tableName;
 
@@ -119,20 +118,4 @@ public class PsqlStore implements Store, AutoCloseable {
             connection.close();
         }
     }
-
-//    public static void main(String[] args) {
-//        Properties properties = new Properties();
-//        try {
-//            properties.load(new FileReader("src/main/resources/rabbit.properties"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        Store psqlStore = new PsqlStore(properties);
-//        Post post = new Post(0, "link1", "test1", "name1", LocalDateTime.now());
-//        psqlStore.save(post);
-//        List<Post> list = psqlStore.getAll();
-//        list.forEach(System.out::println);
-//        Post byId = psqlStore.findById(post.getId() + "");
-//        System.out.println(byId.equals(post));
-//    }
 }

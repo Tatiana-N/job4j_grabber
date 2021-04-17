@@ -3,7 +3,8 @@ package ru.nta.model;
 
 import org.junit.Assert;
 import org.junit.Test;
-import ru.nta.api.Store;
+import ru.nta.api.DaoStore;
+import ru.nta.dao.PsqlStore;
 import ru.nta.utils.ConnectionRollback;
 
 import java.io.FileReader;
@@ -27,7 +28,7 @@ public class PsqlStoreTest {
 
     @Test
     public void save() {
-        try (Store psqlStore = new PsqlStore((ConnectionRollback.create(this.init())), "post")) {
+        try (DaoStore<Post> psqlStore = new PsqlStore((ConnectionRollback.create(this.init())), "post")) {
             Post post1 = new Post(0, "link1.ru", "something about java", "vacancy", LocalDateTime.now());
             Post post2 = new Post(0, "link2.ru", "something about", "vacancy of Java", LocalDateTime.now());
             Post post3 = new Post(0, "link3.ru", "this vacancy shouldn't be in DB", "vacancy", LocalDateTime.now());
@@ -46,7 +47,7 @@ public class PsqlStoreTest {
 
     @Test
     public void getAll() {
-        try (Store psqlStore = new PsqlStore((ConnectionRollback.create(this.init())), "post")) {
+        try (DaoStore<Post> psqlStore = new PsqlStore((ConnectionRollback.create(this.init())), "post")) {
             Post post1 = new Post(0, "link1.ru", "something about java", "vacancy", LocalDateTime.now());
             Post post2 = new Post(0, "link2.ru", "something about", "vacancy of Java", LocalDateTime.now());
             Post post3 = new Post(0, "link3.ru", "this vacancy shouldn't be in DB", "vacancy", LocalDateTime.now());
@@ -64,7 +65,7 @@ public class PsqlStoreTest {
 
     @Test
     public void findById() {
-        try (Store psqlStore = new PsqlStore((ConnectionRollback.create(this.init())), "post")) {
+        try (DaoStore<Post> psqlStore = new PsqlStore((ConnectionRollback.create(this.init())), "post")) {
             Post post1 = new Post(0, "link1.ru", "something about java", "vacancy", LocalDateTime.now());
             Post post2 = new Post(0, "link2.ru", "something about", "vacancy of Java", LocalDateTime.now());
             Post post3 = new Post(0, "link3.ru", "this vacancy shouldn't be in DB", "vacancy", LocalDateTime.now());
