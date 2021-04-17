@@ -61,7 +61,7 @@ public class SqlRuParse implements Parse {
 //        System.out.println(reference);
 //        System.out.println(text);
 //        System.out.println(timeString);
-        return new Post(reference, text, name, new SqlRuDateTimeParser().parse(timeString));
+        return new Post(0, reference, text, name, new SqlRuDateTimeParser().parse(timeString));
     }
 
 }

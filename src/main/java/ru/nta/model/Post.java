@@ -81,7 +81,8 @@ public class Post {
                 + '}';
     }
 
-    public Post(String link, String text, String name, LocalDateTime created) {
+    public Post(int id, String link, String text, String name, LocalDateTime created) {
+        this.id = id;
         this.link = link;
         this.text = text;
         this.name = name;
